@@ -10,4 +10,5 @@ scikit-learn
 requests
 beautifulsoup4
 gunicorn
+feedparser
 joblib

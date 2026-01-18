@@ -8,10 +8,12 @@
 
 <div class="row">
     
-    <!-- COLOANA STÂNGA: PREDICȚIA -->
+    <!-- ============================================= -->
+    <!-- COLOANA STÂNGA (Formular + Rezultat + Știri) -->
+    <!-- ============================================= -->
     <div class="col-md-7">
         
-        <!-- CARD FORMULAR -->
+        <!-- 1. CARD FORMULAR -->
         <div class="card shadow mb-4">
             <div class="card-header bg-primary text-white">
                 <h4>🔮 Analiză & Predicție</h4>
@@ -38,14 +40,14 @@
             </div>
         </div>
 
-       <!-- ZONA REZULTAT -->
+       <!-- 2. ZONA REZULTAT (Apare doar după predicție) -->
         {% if prediction %}
             {% if prediction is string %}
                 <!-- Eroare (ex: Nu am găsit echipa) -->
                 <div class="alert alert-danger shadow">{{ prediction }}</div>
             {% else %}
                 <!-- Rezultat Valid -->
-                <div class="card border-success shadow text-center mt-4">
+                <div class="card border-success shadow text-center mb-4">
                     <div class="card-header bg-success text-white fw-bold">
                         Rezultat AI
                     </div>
@@ -53,12 +55,11 @@
                         <!-- SCORUL MARE -->
                         <h1 class="display-1 fw-bold mb-3">{{ prediction.score }}</h1>
                         
-                        <!-- TEXT PROBABILITATE (O singură dată) -->
+                        <!-- TEXT PROBABILITATE -->
                         <h5 class="text-success fw-bold mb-2">{{ prediction.probability }}</h5>
 
                         <!-- BARA DINAMICĂ -->
                         <div class="progress mt-2 shadow-sm" style="height: 25px;">
-                            
                             {% set bar_color = 'bg-success' %}
                             {% if prediction.prob_value < 55 %}
                                 {% set bar_color = 'bg-warning text-dark' %}
@@ -69,27 +70,54 @@
                             <div class="progress-bar progress-bar-striped progress-bar-animated {{ bar_color }}" 
                                  role="progressbar" 
                                  style="width: {{ prediction.prob_value }}%; font-weight: bold;">
-                                 CERTITUDINE AI: {{ prediction.prob_value }}%
+                                 CERTITUDINE MODEL: {{ prediction.prob_value }}%
                             </div>
                         </div>
 
                         <hr>
-                        <!-- Detalii Tehnice -->
                         <p class="mb-0 text-muted">{{ prediction.raw_goals }}</p>
                         <small class="text-muted">{{ prediction.details }}</small>
                     </div>
                 </div>
             {% endif %}
         {% endif %}
+
+        <!-- 3. ZONA ȘTIRI (NOU) -->
+        <div class="card shadow mt-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-primary fw-bold">📰 Ultimele Știri (DigiSport)</h5>
+                <span class="badge bg-danger animate-pulse">LIVE</span>
+            </div>
+            <div class="list-group list-group-flush">
+                {% if news %}
+                    {% for item in news %}
+                    <a href="{{ item.link }}" target="_blank" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1 fw-bold text-dark">{{ item.title }}</h6>
+                        </div>
+                        <small class="text-muted">{{ item.summary|truncate(80) }}</small>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <div class="p-3 text-center text-muted">Nu sunt știri disponibile momentan.</div>
+                {% endif %}
+            </div>
+            <div class="card-footer text-center bg-light">
+                <small><a href="https://www.digisport.ro/fotbal" target="_blank" class="text-decoration-none">Vezi toate știrile &rarr;</a></small>
+            </div>
+        </div>
         
     </div> <!-- Gata Coloana Stânga -->
 
-    <!-- COLOANA DREAPTA: MECIURILE ZILEI -->
+
+    <!-- ============================================= -->
+    <!-- COLOANA DREAPTA (Meciurile Zilei) -->
+    <!-- ============================================= -->
     <div class="col-md-5">
         <div class="card shadow">
             <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">📅 Meciurile Zilei</h5>
-                <small class="badge bg-danger">LIVE</small>
+                <small class="badge bg-danger">ESPN</small>
             </div>
             <div class="list-group list-group-flush">
                 {% for match in matches %}
@@ -129,7 +157,7 @@
         
         // Dezactivăm butonul
         btn.disabled = true;
-        txt.textContent = " 📡 Analizez datele ESPN...";
+        txt.textContent = " 📡 Analizez datele...";
         spinner.classList.remove('d-none');
     });
 </script>

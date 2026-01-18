@@ -8,6 +8,7 @@ from ml_model import get_prediction_by_name
 # Importăm funcția pentru meciurile de azi
 from matches_data import get_todays_matches 
 from flask import make_response
+from news_data import get_latest_news
 import io
 import os
 import csv
@@ -76,7 +77,8 @@ def dashboard():
     
     # 1. Luăm meciurile zilei
     todays_matches = get_todays_matches()
-    
+    latest_news = get_latest_news()
+
     # 2. Auto-Fill din URL
     if request.method == 'GET' and request.args.get('home'):
         form.home_team.data = request.args.get('home')
@@ -91,7 +93,7 @@ def dashboard():
         # Comparăm versiunile lowercase ca să fim siguri
         if home_clean.lower() == away_clean.lower():
             flash('🦄 Alooo! Echipele trebuie să fie diferite! Nu se pot juca cu ele însele (decât la antrenament).', 'warning')
-            return render_template('dashboard.html', form=form, matches=todays_matches)
+            return render_template('dashboard.html', form=form, matches=todays_matches,news=latest_news)
 
         # --- AICI ERA GREȘEALA ---
         # Acum folosim variantele curățate (home_clean), nu datele brute din formular
@@ -112,7 +114,7 @@ def dashboard():
             db.session.add(new_pred)
             db.session.commit()
         
-    return render_template('dashboard.html', form=form, prediction=prediction_data, matches=todays_matches)
+    return render_template('dashboard.html', form=form, prediction=prediction_data, matches=todays_matches, news=latest_news)
 
 @app.route('/history')
 @login_required
