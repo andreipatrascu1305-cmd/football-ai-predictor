@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="p-5 mb-4 bg-light rounded-3 shadow mt-5 text-center">
+    <div class="container-fluid py-5">
+        <h1 class="display-4 fw-bold text-primary">⚽ Football AI Predictor</h1>
+        <p class="col-md-8 fs-4 mx-auto">
+            Folosim Inteligența Artificială și date UEFA în timp real pentru a prezice rezultatele meciurilor de fotbal.
+        </p>
+        <hr class="my-4">
+        <p>Ai cont deja? Intră și testează predicțiile!</p>
+        
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg px-4 gap-3">Autentificare (Login)</a>
+            <a href="{{ url_for('register') }}" class="btn btn-outline-secondary btn-lg px-4">Creează Cont</a>
+        </div>
+    </div>
+</div>
+
+<div class="row align-items-md-stretch">
+    <div class="col-md-6">
+        <div class="h-100 p-5 text-white bg-dark rounded-3">
+            <h2>📈 Date Live UEFA</h2>
+            <p>Sistemul nostru scanează automat clasamentele oficiale pentru a determina forma de moment a echipelor.</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="h-100 p-5 bg-white border rounded-3 shadow-sm">
+            <h2>🤖 Machine Learning</h2>
+            <p>Un algoritm Random Forest analizează diferența de valoare dintre echipe pentru a oferi cel mai probabil rezultat (1, X sau 2).</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

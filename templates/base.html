@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Predicții Fotbal AI</title>
+    <!-- Bootstrap CSS Modern -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        /* Facem footerul să stea jos dacă pagina e scurtă */
+        body { display: flex; flex-direction: column; min-height: 100vh; }
+        .container.mt-4 { flex: 1; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow sticky-top">
+  <div class="container">
+    <!-- LOGO -->
+    <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">
+        ⚽ Football AI
+    </a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <div class="navbar-nav ms-auto align-items-center">
+        
+        <!-- VERIFICARE: EȘTI LOGAT? -->
+        {% if current_user.is_authenticated %}
+            
+            <!-- 1. Link Dashboard -->
+            <a class="nav-item nav-link active me-3" href="{{ url_for('dashboard') }}">
+                📊 Dashboard
+            </a>
+            
+            <!-- 2. Meniu Dropdown Utilizator -->
+            <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle btn btn-dark bg-opacity-25 text-white px-3 rounded-pill" 
+                   href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    👤 {{ current_user.username }}
+                </a>
+                
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown">
+                    <!-- Istoric -->
+                    <li>
+                        <a class="dropdown-item py-2" href="{{ url_for('history') }}">
+                            📜 Istoric Predicții
+                        </a>
+                    </li>
+                    
+                    <!-- Admin Panel (Doar pentru ID 1) -->
+                    {% if current_user.id == 1 %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-danger fw-bold" href="{{ url_for('admin') }}">
+                            🛡️ Admin Panel
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    <li><hr class="dropdown-divider"></li>
+                    
+                    <!-- Logout -->
+                    <li>
+                        <a class="dropdown-item text-danger py-2" href="{{ url_for('logout') }}">
+                            🚪 Delogare
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        <!-- VERIFICARE: NU EȘTI LOGAT? -->
+        {% else %}
+            
+            <!-- 1. Link Login -->
+            <a class="nav-link text-white me-3" href="{{ url_for('login') }}">
+                Autentificare
+            </a>
+
+            <!-- 2. Buton Register (GALBEN și EVIDENT) -->
+            <a class="btn btn-warning text-dark fw-bold px-4 rounded-pill shadow-sm" href="{{ url_for('register') }}">
+                🚀 Creează Cont
+            </a>
+
+        {% endif %}
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+    <!-- Mesaje Flash (Erori/Succes) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Aici intră conținutul paginilor -->
+    {% block content %}{% endblock %}
+</div>
+
+<!-- Footer -->
+<footer class="bg-light text-center text-lg-start mt-5 border-top">
+  <div class="text-center p-3 text-muted">
+    © 2026 Football AI Project. Dezvoltat cu pasiune de 
+    <span class="fw-bold text-primary">Nica Octavian și Pătrașcu Andrei</span>.
+    <br>
+    <small>Date furnizate de UEFA & ESPN via Python Scraping.</small>
+  </div>
+</footer>
+
+<!-- Scripturi Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

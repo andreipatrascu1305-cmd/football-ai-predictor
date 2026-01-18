@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <h2>📜 Istoricul Tău & Statistici</h2>
+            <p class="text-muted">Vezi tendințele tale de pariere analizate de AI.</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <!-- Butonul de Export (Îl facem la pasul 2) -->
+            <a href="{{ url_for('download_report') }}" class="btn btn-outline-success">
+                📥 Descarcă Raport (CSV)
+            </a>
+        </div>
+    </div>
+
+    <!-- ZONA GRAFIC -->
+    {% if predictions %}
+    <div class="row mb-5">
+        <div class="col-md-6 offset-md-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white fw-bold text-center">Distribuția Predicțiilor Tale</div>
+                <div class="card-body">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABEL ISTORIC -->
+    <div class="table-responsive shadow rounded">
+        <table class="table table-hover table-striped align-middle mb-0">
+            <thead class="bg-dark text-white">
+                <tr>
+                    <th>Data</th>
+                    <th>Meci</th>
+                    <th>Scor Estimat</th>
+                    <th>Rezultat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pred in predictions %}
+                <tr>
+                    <td>{{ pred.date_posted.strftime('%d-%m-%Y') }}</td>
+                    <td class="fw-bold">{{ pred.home_team }} vs {{ pred.away_team }}</td>
+                    <td><span class="badge bg-primary">{{ pred.prediction_score }}</span></td>
+                    <td class="small text-muted">{{ pred.prediction_result }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="alert alert-warning text-center">Nu ai făcut nicio predicție încă. Fă una ca să vezi graficele!</div>
+    {% endif %}
+</div>
+
+<!-- Script Chart.js -->
+<!-- Script Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('myChart');
+        
+        // Luăm valorile din Python, dar punem 0 dacă lipsesc
+        // Filtrul |default(0) este secretul aici
+        const val1 = {{ c1|default(0) }};
+        const valX = {{ cx|default(0) }};
+        const val2 = {{ c2|default(0) }};
+
+        // Verificăm dacă avem date de afișat (să nu desenăm un grafic gol)
+        if (ctx && (val1 + valX + val2 > 0)) {
+            new Chart(ctx, {
+                type: 'doughnut', 
+                data: {
+                    labels: ['Victorie Gazde (1)', 'Egal (X)', 'Victorie Oaspeți (2)'],
+                    datasets: [{
+                        label: '# Predicții',
+                        data: [val1, valX, val2], 
+                        backgroundColor: [
+                            '#0d6efd', // Albastru (Bootstrap Primary)
+                            '#ffc107', // Galben (Bootstrap Warning)
+                            '#dc3545'  // Roșu (Bootstrap Danger)
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Ajută la dimensionare
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        } else if (ctx) {
+            // Dacă nu sunt date, scriem un mesaj pe Canvas
+            ctx.style.display = 'none'; // Ascundem graficul gol
+            document.getElementById('myChart').parentElement.innerHTML = '<p class="text-center text-muted mt-3">Fă o predicție ca să vezi graficul!</p>';
+        }
+    });
+</script>
+{% endblock %}

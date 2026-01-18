@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container text-center mb-4">
+    <h1 class="mt-4 fw-bold text-primary">⚽ Football AI Dashboard</h1>
+    <p class="lead">Alege un meci de azi sau scrie propriile echipe.</p>
+</div>
+
+<div class="row">
+    
+    <!-- COLOANA STÂNGA: PREDICȚIA -->
+    <div class="col-md-7">
+        
+        <!-- CARD FORMULAR -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4>🔮 Analiză & Predicție</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.home_team.label(class="form-label") }}
+                            {{ form.home_team(class="form-control fw-bold", placeholder="ex: Man City") }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.away_team.label(class="form-label") }}
+                            {{ form.away_team(class="form-control fw-bold", placeholder="ex: Arsenal") }}
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="predictBtn" class="btn btn-success w-100 py-2 fw-bold">
+                        <span id="btnText">🚀 Caută pe net și fă Predicția</span>
+                        <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+       <!-- ZONA REZULTAT -->
+        {% if prediction %}
+            {% if prediction is string %}
+                <!-- Eroare (ex: Nu am găsit echipa) -->
+                <div class="alert alert-danger shadow">{{ prediction }}</div>
+            {% else %}
+                <!-- Rezultat Valid -->
+                <div class="card border-success shadow text-center mt-4">
+                    <div class="card-header bg-success text-white fw-bold">
+                        Rezultat AI
+                    </div>
+                    <div class="card-body">
+                        <!-- SCORUL MARE -->
+                        <h1 class="display-1 fw-bold mb-3">{{ prediction.score }}</h1>
+                        
+                        <!-- TEXT PROBABILITATE (O singură dată) -->
+                        <h5 class="text-success fw-bold mb-2">{{ prediction.probability }}</h5>
+
+                        <!-- BARA DINAMICĂ -->
+                        <div class="progress mt-2 shadow-sm" style="height: 25px;">
+                            
+                            {% set bar_color = 'bg-success' %}
+                            {% if prediction.prob_value < 55 %}
+                                {% set bar_color = 'bg-warning text-dark' %}
+                            {% elif prediction.prob_value < 70 %}
+                                {% set bar_color = 'bg-info text-dark' %}
+                            {% endif %}
+
+                            <div class="progress-bar progress-bar-striped progress-bar-animated {{ bar_color }}" 
+                                 role="progressbar" 
+                                 style="width: {{ prediction.prob_value }}%; font-weight: bold;">
+                                 CERTITUDINE AI: {{ prediction.prob_value }}%
+                            </div>
+                        </div>
+
+                        <hr>
+                        <!-- Detalii Tehnice -->
+                        <p class="mb-0 text-muted">{{ prediction.raw_goals }}</p>
+                        <small class="text-muted">{{ prediction.details }}</small>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+        
+    </div> <!-- Gata Coloana Stânga -->
+
+    <!-- COLOANA DREAPTA: MECIURILE ZILEI -->
+    <div class="col-md-5">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">📅 Meciurile Zilei</h5>
+                <small class="badge bg-danger">LIVE</small>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for match in matches %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold">{{ match.home }}</span>
+                        <span class="text-muted small">vs</span>
+                        <span class="fw-bold">{{ match.away }}</span>
+                    </div>
+                    
+                    <!-- Cotele -->
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="badge bg-light text-dark border">1: {{ match.odd_1 }}</span>
+                        <span class="badge bg-light text-dark border">X: {{ match.odd_x }}</span>
+                        <span class="badge bg-light text-dark border">2: {{ match.odd_2 }}</span>
+                    </div>
+
+                    <!-- Buton Auto-Fill -->
+                    <a href="{{ url_for('dashboard', home=match.home, away=match.away) }}" 
+                       class="btn btn-sm btn-outline-primary w-100">
+                       🤖 Analizează Meciul
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div> <!-- Gata Coloana Dreapta -->
+
+</div>
+
+<!-- Script Animație Buton -->
+<script>
+    document.querySelector('form').addEventListener('submit', function() {
+        var btn = document.getElementById('predictBtn');
+        var txt = document.getElementById('btnText');
+        var spinner = document.getElementById('btnSpinner');
+        
+        // Dezactivăm butonul
+        btn.disabled = true;
+        txt.textContent = " 📡 Analizez datele ESPN...";
+        spinner.classList.remove('d-none');
+    });
+</script>
+{% endblock %}
