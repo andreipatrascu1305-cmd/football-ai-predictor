@@ -21,6 +21,11 @@ db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+# 👇👇👇 ADAUGĂ ACEST BLOC AICI 👇👇👇
+# Acest cod va rula DE FIECARE DATĂ când pornește serverul (și pe Render)
+with app.app_context():
+    db.create_all()
+# 👆👆👆 GATA MODIFICAREA 👆👆👆
 
 @login_manager.user_loader
 def load_user(user_id):
