@@ -22,11 +22,9 @@ db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-# 👇👇👇 ADAUGĂ ACEST BLOC AICI 👇👇👇
 # Acest cod va rula DE FIECARE DATĂ când pornește serverul (și pe Render)
 with app.app_context():
     db.create_all()
-# 👆👆👆 GATA MODIFICAREA 👆👆👆
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -199,8 +197,8 @@ if __name__ == '__main__':
         # Verificăm dacă baza de date există
         if not os.path.exists('database.db'):
             db.create_all()
-            print("✅ Baza de date a fost creată!")
+            print("Baza de date a fost creată!")
             
     # Pornim serverul
-    print("🚀 Serverul pornește pe http://127.0.0.1:5000")
+    print(" Serverul pornește pe http://127.0.0.1:5000")
     app.run(debug=True)

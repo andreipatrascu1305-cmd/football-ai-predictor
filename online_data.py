@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # ==========================================
-# 📂 BACKUP DB (600+ Echipe)
+#  BACKUP DB (600+ Echipe)
 # Include Ligi Secunde, America de Sud, Arabia, etc.
 # ==========================================
 BACKUP_DB = {
@@ -186,14 +186,14 @@ def get_online_elo(team_name):
 
     try:
         # MESAJ PROFESIONAL 1: Conexiune
-        print(f"📡 [NET] Conectare la UEFA Live Data ({url})...")
+        print(f" [NET] Conectare la UEFA Live Data ({url})...")
         response = requests.get(url, headers=headers, timeout=4)
         soup = BeautifulSoup(response.text, 'html.parser')
         
         rows = soup.find_all('tr')
         
         # MESAJ PROFESIONAL 2: Analiza Datelor
-        print(f"✅ [OK] Conexiune stabilita. Analizez {len(rows)} echipe din clasament...")
+        print(f" [OK] Conexiune stabilita. Analizez {len(rows)} echipe din clasament...")
         
         for row in rows:
             row_text = row.get_text().lower().replace(" ", "").replace(".", "")
@@ -212,7 +212,7 @@ def get_online_elo(team_name):
 
     # --- ZONA BACKUP ---
     # Mesaj care explică DE CE trecem pe backup (nu e eroare, e logică)
-    print(f"🔄 [INFO] Echipa '{team_name}' nu este în Top 500 UEFA. Comut pe Baza de Date Extinsă...")
+    print(f" [INFO] Echipa '{team_name}' nu este în Top 500 UEFA. Comut pe Baza de Date Extinsă...")
     
     if clean_input in BACKUP_DB:
         print(f"📂 [BACKUP] Găsit în sistem local: Rank {BACKUP_DB[clean_input]}")
@@ -220,10 +220,10 @@ def get_online_elo(team_name):
     
     for key, val in BACKUP_DB.items():
         if clean_input in key or key in clean_input:
-            print(f"📂 [BACKUP] Găsit prin aproximare ({key}): Rank {val}")
+            print(f" [BACKUP] Găsit prin aproximare ({key}): Rank {val}")
             return val
 
-    print("❌ [ERROR] Echipa necunoscută. Se atribuie Rank Mediu (150).")
+    print(" [ERROR] Echipa necunoscută. Se atribuie Rank Mediu (150).")
     return 150
 # ==========================================
 # 🆕 SECTIUNE NOUA: FORMATARE NUME

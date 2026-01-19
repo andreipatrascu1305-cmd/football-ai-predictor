@@ -18,7 +18,7 @@
   <div class="container">
     <!-- LOGO -->
     <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">
-        ⚽ ScoreIQ
+        ScoreIQ
     </a>
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -33,7 +33,7 @@
             
             <!-- 1. Link Dashboard -->
             <a class="nav-item nav-link active me-3" href="{{ url_for('dashboard') }}">
-                📊 Dashboard
+                 Dashboard
             </a>
             
             <!-- 2. Meniu Dropdown Utilizator -->
@@ -47,7 +47,7 @@
                     <!-- Istoric -->
                     <li>
                         <a class="dropdown-item py-2" href="{{ url_for('history') }}">
-                            📜 Istoric Predicții
+                             Istoric Predicții
                         </a>
                     </li>
                     
@@ -56,7 +56,7 @@
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <a class="dropdown-item text-danger fw-bold" href="{{ url_for('admin') }}">
-                            🛡️ Admin Panel
+                             Admin Panel
                         </a>
                     </li>
                     {% endif %}
@@ -66,7 +66,7 @@
                     <!-- Logout -->
                     <li>
                         <a class="dropdown-item text-danger py-2" href="{{ url_for('logout') }}">
-                            🚪 Delogare
+                             Delogare
                         </a>
                     </li>
                 </ul>
@@ -82,7 +82,7 @@
 
             <!-- 2. Buton Register (GALBEN și EVIDENT) -->
             <a class="btn btn-warning text-dark fw-bold px-4 rounded-pill shadow-sm" href="{{ url_for('register') }}">
-                🚀 Creează Cont
+                 Creează Cont
             </a>
 
         {% endif %}
