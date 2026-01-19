@@ -8,10 +8,10 @@ try:
     from online_data import BACKUP_DB
 except ImportError:
     BACKUP_DB = {} 
-    print("⚠️ Atenție: Nu am putut importa BACKUP_DB.")
+    print(" Atenție: Nu am putut importa BACKUP_DB.")
 
 def download_real_data():
-    print("🌍 [2026] Descarc date REALE DOAR din Sezonul Curent (2025-2026)...")
+    print(" [2026] Descarc date REALE DOAR din Sezonul Curent (2025-2026)...")
     
     # URL-uri doar pentru sezonul 2526
     urls = [
@@ -28,7 +28,7 @@ def download_real_data():
     
     for url in urls:
         try:
-            print(f"⬇️ Descarc: {url} ...")
+            print(f" Descarc: {url} ...")
             s = requests.get(url, timeout=10).content
             df = pd.read_csv(io.StringIO(s.decode('utf-8')))
             
@@ -36,13 +36,13 @@ def download_real_data():
                 df = df[['HomeTeam', 'AwayTeam', 'FTHG', 'FTAG']]
                 all_matches.append(df)
             else:
-                print(f"⚠️ Format necunoscut, sar peste.")
+                print(f"Format necunoscut, sar peste.")
                 
         except Exception as e:
-            print(f"⚠️ Eroare la {url}: {e}")
+            print(f" Eroare la {url}: {e}")
 
     if not all_matches:
-        print("❌ Nu am putut descărca date. Verifică netul.")
+        print("Nu am putut descărca date. Verifică netul.")
         return
 
     full_df = pd.concat(all_matches)
@@ -67,8 +67,8 @@ def download_real_data():
     final_df = final_df.dropna()
     
     final_df.to_csv("data/matches.csv", index=False)
-    print(f"✅ Gata! Avem {len(final_df)} meciuri RECENTE (2025-2026).")
-    print("🚀 Rulează acum 'python train_model.py'!")
+    print(f"Gata! Avem {len(final_df)} meciuri RECENTE (2025-2026).")
+    print("Rulează acum 'python train_model.py'!")
 
 if __name__ == "__main__":
     download_real_data()

@@ -16,7 +16,7 @@ def get_todays_matches():
     matches = []
     
     try:
-        print(f"📅 Caut meciuri pe ESPN ({url})...")
+        print(f" Caut meciuri pe ESPN ({url})...")
         response = requests.get(url, headers=headers, timeout=6)
         
         if response.status_code == 200:
@@ -53,14 +53,14 @@ def get_todays_matches():
                         break
             
             if matches:
-                print(f"✅ Găsit {len(matches)} meciuri pe ESPN.")
+                print(f" Găsit {len(matches)} meciuri pe ESPN.")
 
     except Exception as e:
-        print(f"⚠️ Eroare ESPN: {e}")
+        print(f" Eroare ESPN: {e}")
 
     # --- BACKUP DINAMIC (Dacă netul eșuează) ---
     if not matches:
-        print("⚠️ Nu am găsit meciuri online. Generez meciuri simulate.")
+        print(" Nu am găsit meciuri online. Generez meciuri simulate.")
         matches = generate_fake_matches()
 
     return matches

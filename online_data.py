@@ -204,18 +204,18 @@ def get_online_elo(team_name):
                     rank_text = cols[0].get_text().strip()
                     if rank_text.isdigit():
                         rank = int(rank_text)
-                        print(f"🌟 [SUCCESS] Echipa gasita online: {team_name} -> Rank {rank}")
+                        print(f" [SUCCESS] Echipa gasita online: {team_name} -> Rank {rank}")
                         return rank
                         
     except Exception as e:
-        print(f"⚠️ [WARNING] Eroare conexiune: {e}")
+        print(f" [WARNING] Eroare conexiune: {e}")
 
     # --- ZONA BACKUP ---
     # Mesaj care explică DE CE trecem pe backup (nu e eroare, e logică)
     print(f" [INFO] Echipa '{team_name}' nu este în Top 500 UEFA. Comut pe Baza de Date Extinsă...")
     
     if clean_input in BACKUP_DB:
-        print(f"📂 [BACKUP] Găsit în sistem local: Rank {BACKUP_DB[clean_input]}")
+        print(f" [BACKUP] Găsit în sistem local: Rank {BACKUP_DB[clean_input]}")
         return BACKUP_DB[clean_input]
     
     for key, val in BACKUP_DB.items():
@@ -226,7 +226,7 @@ def get_online_elo(team_name):
     print(" [ERROR] Echipa necunoscută. Se atribuie Rank Mediu (150).")
     return 150
 # ==========================================
-# 🆕 SECTIUNE NOUA: FORMATARE NUME
+# SECTIUNE NOUA: FORMATARE NUME
 # ==========================================
 
 # Aici definim cum vrem să arate numele oficial
