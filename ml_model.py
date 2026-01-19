@@ -2,18 +2,24 @@ import joblib
 import os
 import pandas as pd
 import numpy as np
-from online_data import get_online_elo
+# IMPORTAM SI FUNCTIA NOUA DE NUME:
+from online_data import get_online_elo, get_official_name
 
 MODEL_H_PATH = "model_home_goals.pkl"
 MODEL_A_PATH = "model_away_goals.pkl"
 
-def get_prediction_by_name(home_team_name, away_team_name):
-    # 1. Scraping
-    home_rank = get_online_elo(home_team_name)
-    away_rank = get_online_elo(away_team_name)
+def get_prediction_by_name(home_team_input, away_team_input):
+    # 0. OBȚINERE NUME OFICIAL (PENTRU AFISARE FRUMOASĂ)
+    # Chiar daca userul scrie ":real", aici va deveni "Real Madrid"
+    home_name_display = get_official_name(home_team_input)
+    away_name_display = get_official_name(away_team_input)
 
-    if home_rank is None: return f"⚠️ Nu am găsit '{home_team_name}'."
-    if away_rank is None: return f"⚠️ Nu am găsit '{away_team_name}'."
+    # 1. Scraping (Folosim inputul original sau curățat pentru căutare rank)
+    home_rank = get_online_elo(home_team_input)
+    away_rank = get_online_elo(away_team_input)
+
+    if home_rank is None: return f"⚠️ Nu am găsit '{home_name_display}'."
+    if away_rank is None: return f"⚠️ Nu am găsit '{away_name_display}'."
 
     # 2. Verificare Modele
     if not os.path.exists(MODEL_H_PATH) or not os.path.exists(MODEL_A_PATH):
@@ -31,45 +37,41 @@ def get_prediction_by_name(home_team_name, away_team_name):
     score_h = int(round(goals_h))
     score_a = int(round(goals_a))
 
-    # --- CALCUL 1: PROBABILITATEA DE VICTORIE (Textul) ---
-    # Aceasta rămâne bazată pe goluri
+    # --- CALCUL 1: PROBABILITATEA DE VICTORIE ---
     total_goals = goals_h + goals_a + 0.01
     win_prob_h = int((goals_h / total_goals) * 100)
     win_prob_a = int((goals_a / total_goals) * 100)
 
-    # --- CALCUL 2: ÎNCREDEREA AI-ULUI (Bara) ---
-    # Aceasta se bazează pe diferența de valoare (Rank)
-    # Dacă diferența e mare, AI-ul e sigur. Dacă e mică, e confuz.
-    
+    # --- CALCUL 2: ÎNCREDEREA AI-ULUI ---
     rank_diff = abs(home_rank - away_rank)
-    
-    # Formula Secretă: Plecăm de la 50% și adăugăm puncte pentru diferența de valoare
-    # La fiecare 5 locuri diferență în clasament, adăugăm 1% încredere
     ai_confidence = 55 + (rank_diff / 4)
     
-    # Bonus: Dacă diferența de goluri prezisă e mare (>1.5), creștem încrederea
     goal_diff = abs(goals_h - goals_a)
     if goal_diff > 1.5:
         ai_confidence += 15
         
-    # Nu lăsăm să treacă de 98% (nimic nu e perfect) sau să scadă sub 40%
     ai_confidence = min(98, max(40, int(ai_confidence)))
 
-    # --- GENERARE MESAJ ---
+    # --- GENERARE MESAJ (FOLOSIND NUMELE OFICIALE) ---
     diff = abs(goals_h - goals_a)
     msg_prob = ""
 
     if diff < 0.35:
         msg_prob = f"Șanse de EGAL: {max(win_prob_h, win_prob_a)}% (Meci Strâns)"
     elif goals_h > goals_a:
-        msg_prob = f"Șanse victorie {home_team_name}: {win_prob_h}%"
+        # AICI FOLOSIM home_name_display IN LOC DE home_team_input
+        msg_prob = f"Șanse victorie {home_name_display}: {win_prob_h}%"
     else:
-        msg_prob = f"Șanse victorie {away_team_name}: {win_prob_a}%"
+        # AICI FOLOSIM away_name_display IN LOC DE away_team_input
+        msg_prob = f"Șanse victorie {away_name_display}: {win_prob_a}%"
 
     return {
         "score": f"{score_h} - {score_a}",
         "details": f"Rank UEFA: {home_rank} vs {away_rank}",
-        "probability": msg_prob,       # Textul (ex: 60%)
-        "prob_value": ai_confidence,   # Bara (ex: 85% sigur)
-        "raw_goals": f"(Estimat AI: {goals_h:.2f} vs {goals_a:.2f} goluri)"
+        "probability": msg_prob,       
+        "prob_value": ai_confidence,   
+        "raw_goals": f"(Estimat AI: {goals_h:.2f} vs {goals_a:.2f} goluri)",
+        # Putem trimite si numele oficiale in dictionar daca e nevoie in frontend
+        "home_team": home_name_display,
+        "away_team": away_name_display
     }
